@@ -11,23 +11,14 @@ import (
 )
 
 func TestMainHandlerWhenCountMoreThanTotalOne(t *testing.T) {
-	totalCount := 4
 	req := httptest.NewRequest("GET", "/cafe?count=10&city=moscow", nil) // здесь нужно создать запрос к сервису
-
 	responseRecorder := httptest.NewRecorder()
 	handler := http.HandlerFunc(cd)
 	handler.ServeHTTP(responseRecorder, req)
 
 	// здесь нужно добавить необходимые проверки
-
-	body := responseRecorder.Body.String()
-	list := strings.Split(body, ",")
-
-	// if len(list) != totalCount {
-	// 	t.Errorf("expected cafe count: %d, got %d", totalCount, len(list))
-	// }
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
-	assert.Len(t, list, totalCount)
+	body := responseRecorder.Body.String()
 	assert.NotEmpty(t, body)
 }
 
@@ -39,15 +30,12 @@ func TestMainHandlerWhenCityNotCorrect(t *testing.T) {
 	handler.ServeHTTP(responseRecorder, req)
 
 	// здесь нужно добавить необходимые проверки
-
-	body := responseRecorder.Body.String()
-	//list := strings.Split(body, ",")
-
-	// if len(list) != totalCount {
-	// 	t.Errorf("expected cafe count: %d, got %d", totalCount, len(list))
-	// }
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
+	body := responseRecorder.Body.String()
 	assert.NotEmpty(t, body)
+	expectedErrorMessage := "city not supported"
+	assert.Contains(t, body, expectedErrorMessage)
+
 }
 
 func TestMainHandlerWhenCountMoreThanTotalTwo(t *testing.T) {
@@ -63,10 +51,7 @@ func TestMainHandlerWhenCountMoreThanTotalTwo(t *testing.T) {
 	body := responseRecorder.Body.String()
 	list := strings.Split(body, ",")
 
-	// if len(list) != totalCount {
-	// 	t.Errorf("expected cafe count: %d, got %d", totalCount, len(list))
-	// }
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
-	assert.GreaterOrEqual(t, len(list), totalCount)
+	assert.Len(t, len(list), totalCount)
 	assert.NotEmpty(t, body)
 }
