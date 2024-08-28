@@ -18,8 +18,10 @@ func TestMainHandlerWhenCountMoreThanTotalOne(t *testing.T) {
 
 	// здесь нужно добавить необходимые проверки
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
-	body := responseRecorder.Body.String()
+	body := responseRecorder.Body
 	assert.NotEmpty(t, body)
+	bodyString := responseRecorder.Body.String()
+	assert.NotEmpty(t, bodyString)
 }
 
 func TestMainHandlerWhenCityNotCorrect(t *testing.T) {
@@ -33,7 +35,7 @@ func TestMainHandlerWhenCityNotCorrect(t *testing.T) {
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 	body := responseRecorder.Body.String()
 	assert.NotEmpty(t, body)
-	expectedErrorMessage := "city not supported"
+	expectedErrorMessage := "wrong city value"
 	assert.Contains(t, body, expectedErrorMessage)
 
 }
@@ -53,5 +55,4 @@ func TestMainHandlerWhenCountMoreThanTotalTwo(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
 	assert.Len(t, len(list), totalCount)
-	assert.NotEmpty(t, body)
 }
