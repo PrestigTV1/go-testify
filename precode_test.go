@@ -13,27 +13,29 @@ import (
 func TestMainHandlerWhenCountMoreThanTotalOne(t *testing.T) {
 	req := httptest.NewRequest("GET", "/cafe?count=10&city=moscow", nil) // здесь нужно создать запрос к сервису
 	responseRecorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(cd)
+	handler := http.HandlerFunc(mainHandle)
 	handler.ServeHTTP(responseRecorder, req)
 
 	// здесь нужно добавить необходимые проверки
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
-	body := responseRecorder.Body.String()
+	body := responseRecorder.Body
 	assert.NotEmpty(t, body)
+	bodyString := responseRecorder.Body.String()
+	assert.NotEmpty(t, bodyString)
 }
 
 func TestMainHandlerWhenCityNotCorrect(t *testing.T) {
-	req := httptest.NewRequest("GET", "/cafe?city=kaliningrad", nil) // здесь нужно создать запрос к сервису
+	req := httptest.NewRequest("GET", "/cafe?count=1&city=kaliningrad", nil) // здесь нужно создать запрос к сервису
 
 	responseRecorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(cd)
+	handler := http.HandlerFunc(mainHandle)
 	handler.ServeHTTP(responseRecorder, req)
 
 	// здесь нужно добавить необходимые проверки
 	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 	body := responseRecorder.Body.String()
-	assert.NotEmpty(t, body)
-	expectedErrorMessage := "city not supported"
+	require.NotEmpty(t, body)
+	expectedErrorMessage := "wrong city value"
 	assert.Contains(t, body, expectedErrorMessage)
 
 }
@@ -43,7 +45,7 @@ func TestMainHandlerWhenCountMoreThanTotalTwo(t *testing.T) {
 	req := httptest.NewRequest("GET", "/cafe?count=10&city=moscow", nil) // здесь нужно создать запрос к сервису
 
 	responseRecorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(cd)
+	handler := http.HandlerFunc(mainHandle)
 	handler.ServeHTTP(responseRecorder, req)
 
 	// здесь нужно добавить необходимые проверки
@@ -52,6 +54,5 @@ func TestMainHandlerWhenCountMoreThanTotalTwo(t *testing.T) {
 	list := strings.Split(body, ",")
 
 	require.Equal(t, http.StatusOK, responseRecorder.Code)
-	assert.Len(t, len(list), totalCount)
-	assert.NotEmpty(t, body)
+	assert.Len(t, list, totalCount)
 }

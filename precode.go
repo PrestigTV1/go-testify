@@ -10,7 +10,7 @@ var cafeList = map[string][]string{
 	"moscow": []string{"Мир кофе", "Сладкоежка", "Кофе и завтраки", "Сытый студент"},
 }
 
-func cd(w http.ResponseWriter, req *http.Request) {
+func mainHandle(w http.ResponseWriter, req *http.Request) {
 	countStr := req.URL.Query().Get("count")
 	if countStr == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -42,4 +42,12 @@ func cd(w http.ResponseWriter, req *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(answer))
+}
+
+func main() {
+	http.HandleFunc("/", mainHandle)
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		panic(err)
+	}
 }
